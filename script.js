@@ -1,5 +1,28 @@
 'use strict'
 
+function initCalc() {
+  const digits = document.getElementById('digitsBlock');
+  const display = document.getElementById('display');
+  digits.addEventListener('click', (event) => {
+    const currentValue = display.value;
+    const value = event.target.dataset.value;
+    if (value) {
+      display.value = currentValue + value;
+    }
+  })
+  document.addEventListener('keypress', (event) => {
+    event.preventDefault();
+    const value = Number.parseInt(event.key, 10)
+    if (Number.isNaN(value)) {
+      return undefined;
+    }
+    const currentValue = display.value;
+    display.value = currentValue + value;
+  });
+}
+
+window.addEventListener('DOMContentLoaded', initCalc);
+
 function add(a, b) {
   return a + b;
 }
@@ -16,32 +39,17 @@ function multi(a, b) {
   return a * b;
 }
 
-function print(a, b, callOperator) {
-  const result = callOperator(a, b)
-  console.log(result);
+function print(message) {
+  console.log(message);
 }
 
 function applyOperator(a, b, operator) {
   switch (operator) {
-    case '+': {
-      print(a, b, add);
-      break;
-    }
-    case '-': {
-      print(a, b, sub);
-      break;
-    }
-    case '/': {
-      print(a, b, div);
-      break;
-    }
-    case '*': {
-      print(a, b, multi);
-      break;
-    }
-    default: {
-      console.log('Неизвестный оператор!')
-    }
+    case '+': return add(a, b);
+    case '-': return sub(a, b);
+    case '/': return div(a, b);
+    case '*': return multi(a, b);
+    default: throw new Error('Неизвестный оператор!');
   }
 }
 
@@ -67,12 +75,50 @@ function getOperator() {
 
 let repeat = true;
 
-do {
-  const firstValue = getNumber('Введите первое значение');
-  const secondValue = getNumber('Введите второе значение');
-  const operator = getOperator();
+let state = [];
 
-  applyOperator(firstValue, secondValue, operator);
+function addValue(value) {
+  return {
+    type: 'addValue',
+    payload: value,
+  }
+}
 
-  repeat = confirm('Продолжить!');
-} while (repeat);
+function addOperator(value) {
+  return {
+    type: 'addOperator',
+    payload: value,
+  }
+}
+
+function reducer(currentState, action) {
+  switch (action.type) {
+    case 'addValue': {
+      return [...currentState, [action.payload]];
+    }
+    case 'addOperator': {
+      return [
+        ...currentState.slice(0, currentState.length - 2),
+        [currentState[currentState.length - 1][0], action.payload],
+      ];
+    }
+  }
+}
+
+function setState(action) {
+  state = reducer(state, action);
+}
+
+// do {
+//   const firstValue = getNumber('Введите первое значение');
+//   setState(addValue(firstValue));
+//   const operator = getOperator();
+//   setState(addOperator(operator));
+//   const secondValue = getNumber('Введите второе значение');
+//   setState(addValue(secondValue));
+//
+//   const result = applyOperator(firstValue, secondValue, operator);
+//   print(`${firstValue} ${operator} ${secondValue} = ${result}`);
+//
+//   repeat = confirm('Продолжить!');
+// } while (repeat);

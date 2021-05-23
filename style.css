@@ -1,0 +1,36 @@
+.keyboard {
+    display: flex;
+    width: 100%;
+}
+
+.digit-block {
+    display: flex;
+    width: 50%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-digit {
+    flex-basis: 29%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-bottom: 10px;
+}
+
+.operator-block {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.btn-operator {
+    width: 40px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-bottom: 10px;
+}
+
